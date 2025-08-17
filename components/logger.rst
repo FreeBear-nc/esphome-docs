@@ -106,6 +106,13 @@ Default UART GPIO Pins
       - N/A
       - N/A
       - 18/19
+    * - ESP32-C5
+      - TX: 10, RX: 11
+      - N/A
+      - Undefined
+      - N/A
+      - N/A
+      - 13/14
     * - ESP32-C6
       - TX: 16, RX: 17
       - N/A
@@ -113,6 +120,13 @@ Default UART GPIO Pins
       - N/A
       - N/A
       - 12/13
+    * - ESP32-P4
+      - TX: 37, RX: 38
+      - N/A
+      - TX: 10, RX: 11
+      - N/A
+      - N/A
+      - 24/25
     * - ESP32-S2
       - TX: 43, RX: 44
       - N/A
@@ -155,7 +169,13 @@ the original ESP32 or ESP8266) continue to use USB-to-serial bridge ICs for comm
     * - ESP32-C3
       - ``USB_CDC``
       - ``USB_SERIAL_JTAG``
+    * - ESP32-C5
+      - ``USB_CDC``
+      - ``USB_SERIAL_JTAG``
     * - ESP32-C6
+      - ``USB_CDC``
+      - ``USB_SERIAL_JTAG``
+    * - ESP32-P4
       - ``USB_CDC``
       - ``USB_SERIAL_JTAG``
     * - ESP32-S2
@@ -213,18 +233,10 @@ Possible log levels are (sorted by severity):
 Manual Tag-Specific Log Levels
 ------------------------------
 
-If some component is spamming the logs and you want to manually set the
-log level for it, first identify the tag of the log messages in question
-and then disable them in your configuration.
+If some component is spamming the logs and you want to adjust its log
+level, you can set its level in your configuration, by identifiying its tag.
 
-Suppose we want to have verbose log messages globally, but the MQTT
-client spams too much. In the following example, we'd first see that the
-tag of the MQTT client is ``mqtt.client`` (before the first colon) and
-the tag for MQTT components is ``mqtt.component``.
-
-.. figure:: images/logger-manual_log_level.png
-
-Next, we can manually set the log levels in the configuration like this:
+Example: verbose logs globally, but reduce MQTT noise:
 
 .. code-block:: yaml
 
@@ -234,11 +246,22 @@ Next, we can manually set the log levels in the configuration like this:
         mqtt.component: DEBUG
         mqtt.client: ERROR
 
-Please note that the global log level determines what log messages are
-saved in the binary. So for example an ``INFO`` global log message will
-purge all ``DEBUG`` log statements from the binary in order to conserve
-space. This however means that you cannot set tag-specific log levels
-that have a lower severity than the global log level.
+The `level` option controls which log statements are included in the
+firmware. You cannot set a tag to a more detailed level than
+the global one, because log statements with lower severity than that level are not compiled in.  
+However, you can suppress them using `initial_level`, and enable them for specific tags:
+
+.. code-block:: yaml
+
+    logger:
+      level: VERBOSE
+      initial_level: ERROR
+      logs:
+        wifi: VERBOSE
+
+Here, `VERBOSE` logs are compiled, but not shown (because of `initial_level: ERROR`)
+However, the `wifi` tag has `VERBOSE` level enabled, and shown.
+
 
 .. _logger-log_action:
 
@@ -323,5 +346,6 @@ See Also
 
 - :doc:`/components/uart`
 - :doc:`/components/select/logger`
+- :doc:`/guides/troubleshooting` - Troubleshooting guide for debugging crashes and boot failures
 - :apiref:`logger/logger.h`
 - :ghedit:`Edit`

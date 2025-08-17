@@ -626,8 +626,13 @@ If you're experiencing issues with your color display, the ``show_test_card: tru
 When all points above are shown correctly then the display is working as expected.
 To help the graphics display team determine the best way to help you, **a picture of the result of this option is very helpful.**
 
-Should you `create an issue <https://github.com/esphome/issues/issues>`__ in GitHub regarding your display, please
+Should you `create an issue <https://github.com/esphome/esphome/issues>`__ in GitHub regarding your display, please
 be sure to **include a link to where you purchased the display** so that we can validate the configuration you've used.
+
+.. note::
+
+    If you set `update_interval: never` in your config you will not see the test card because the `display:` component will not update the display with the test card. If you want to see a test card, set `update_interval:` to something other than `never`.
+
 
 .. note::
 
